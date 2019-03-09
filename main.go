@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 )
 
 func checkErr(e error) {
@@ -10,27 +11,55 @@ func checkErr(e error) {
 	}
 }
 
-func main() {
-	srv := retrieveAccount("e0t3rx")
-
-	for _, f := range listAllFiles(srv) {
-		fmt.Println(f.Name, f.Id, f.Size)
+func handleCmd(cmd string) {
+	switch cmd {
+	case "accounts":
+		printAccInfo()
+	case "space":
+		printSpaceInfo()
+	case "file":
+		printFileInfo()
+	default:
+		printHelpMsg()
 	}
+}
 
-	// Create a sample file
-	// f, err := os.Open("a.png")
-	// checkErr(err)
-	// defer f.Close()
+func printAccInfo() {
+	srvs := getAllAccounts("accounts.txt")
+	fmt.Println("Connected Accounts:", len(srvs))
+	for _, srv := range srvs {
+		user := getUserInfo(srv)
+		fmt.Println("["+user.EmailAddress+"] ", user.DisplayName)
+	}
+}
 
-	// file, err := createFile(srv, "a.png", f, "root")
-	// checkErr(err)
+func printSpaceInfo() {
+	srvs := getAllAccounts("accounts.txt")
+	totalSpace := int64(0)
+	usedSpace := int64(0)
 
-	// fmt.Println(file.Name, file.Id)
-	// err = deleteFile(srv, "1_yeT7cLmbtx5PgggFE5rQepEtQW-d-QQ")
-	// checkErr(err)
+	for _, srv := range srvs {
+		quota := getUsageQuota(srv)
+		totalSpace += quota.Limit
+		usedSpace += quota.Usage
+		fmt.Println("["+getUserInfo(srv).EmailAddress+"] ", quota.Usage*100/quota.Limit, "% Used of", quota.Limit/1024/1024/1024, "GB")
+	}
+	fmt.Println("\nOverall:", usedSpace*100/totalSpace, "% Used  (", (totalSpace-usedSpace)/1024/1024/1024, "GB Available in", totalSpace/1024/1024/1024, "GB )")
+}
 
-	// downloadFile(srv, "1bLObXT3D3ZQgMcjLH1TftvZ1v7WRcE-_", "aaa.png")
-	// fmt.Println(getUsageQuota(srv))
+func printFileInfo() {
+	fmt.Println("File stuff")
+}
+
+func printHelpMsg() {
+	fmt.Println("Invalid option")
+}
+
+func main() {
+	if len(os.Args) > 1 {
+		cmd := os.Args[1]
+		handleCmd(cmd)
+	}
 }
 
 /*
