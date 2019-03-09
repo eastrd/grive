@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
@@ -170,7 +171,28 @@ func downloadFile(service *drive.Service, fileID string, path string) {
 	checkErr(err)
 }
 
-func getUsageQuota(service *drive.Service) *drive.About {
+func getAllAccounts(configPath string) []*drive.Service {
+	fb, err := ioutil.ReadFile("accounts.txt")
+	checkErr(err)
+	names := strings.Split(string(fb), "\r\n")
+
+	srvs := make([]*drive.Service, 0)
+	for _, name := range names {
+		srvs = append(srvs, retrieveAccount(name))
+	}
+	return srvs
+}
+
+func getUserInfo(service *drive.Service) *drive.User {
+	about, err := service.About.Get().Fields("user").Do()
+	checkErr(err)
+
+	// fmt.Println(about.User.EmailAddress)
+	// fmt.Println(about.User.DisplayName)
+	return about.User
+}
+
+func getUsageQuota(service *drive.Service) *drive.AboutStorageQuota {
 	about, err := service.About.Get().Fields("storageQuota").Do()
 	checkErr(err)
 
@@ -178,5 +200,26 @@ func getUsageQuota(service *drive.Service) *drive.About {
 	// fmt.Println("Total Usage Across all services (Gmail, Photos, Drive):", about.StorageQuota.Usage/1024/1024, "MB")
 	// fmt.Println("UsageInDrive:", about.StorageQuota.UsageInDrive/1024/1024, "MB")
 	// fmt.Println("UsageInDriveTrash:", about.StorageQuota.UsageInDriveTrash/1024/1024, "MB")
-	return about
+	return about.StorageQuota
 }
+
+// srv := retrieveAccount("e0t3rx")
+
+// for _, f := range listAllFiles(srv) {
+// 	fmt.Println(f.Name, f.Id, f.Size)
+// }
+
+// Create a sample file
+// f, err := os.Open("a.png")
+// checkErr(err)
+// defer f.Close()
+
+// file, err := createFile(srv, "a.png", f, "root")
+// checkErr(err)
+
+// fmt.Println(file.Name, file.Id)
+// err = deleteFile(srv, "1_yeT7cLmbtx5PgggFE5rQepEtQW-d-QQ")
+// checkErr(err)
+
+// downloadFile(srv, "1bLObXT3D3ZQgMcjLH1TftvZ1v7WRcE-_", "aaa.png")
+// fmt.Println(getUsageQuota(srv))
