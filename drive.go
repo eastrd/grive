@@ -57,7 +57,7 @@ func retrieveAccount(name string) *drive.Service {
 	config, err := google.ConfigFromJSON(b, drive.DriveScope)
 	checkErr(err)
 
-	client := getClient(config, name)
+	client := _getClient(config, name)
 
 	srv, err := drive.New(client)
 	checkErr(err)
@@ -66,21 +66,21 @@ func retrieveAccount(name string) *drive.Service {
 }
 
 // Retrieve a token, saves the token, then returns the generated client.
-func getClient(config *oauth2.Config, name string) *http.Client {
+func _getClient(config *oauth2.Config, name string) *http.Client {
 	// The file {username}_token.json stores the user's access and refresh tokens, and is
 	// created automatically when the authorization flow completes for the first
 	// time.
 	tokFile := name + "_token.json"
-	tok, err := tokenFromFile(tokFile)
+	tok, err := _tokenFromFile(tokFile)
 	if err != nil {
-		tok = getTokenFromWeb(config)
-		saveToken(tokFile, tok)
+		tok = _getTokenFromWeb(config)
+		_saveToken(tokFile, tok)
 	}
 	return config.Client(context.Background(), tok)
 }
 
 // Request a token from the web, then returns the retrieved token.
-func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
+func _getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	fmt.Println("Go to link and enter auth code:", authURL)
 
@@ -95,7 +95,7 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 }
 
 // Retrieves a token from a local file.
-func tokenFromFile(file string) (*oauth2.Token, error) {
+func _tokenFromFile(file string) (*oauth2.Token, error) {
 	f, err := os.Open(file)
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func tokenFromFile(file string) (*oauth2.Token, error) {
 }
 
 // Saves a token to a file path.
-func saveToken(path string, token *oauth2.Token) {
+func _saveToken(path string, token *oauth2.Token) {
 	fmt.Printf("Saving credential file to: %s\n", path)
 	f, err := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	checkErr(err)
@@ -117,7 +117,7 @@ func saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func createFile(service *drive.Service, name string, content io.Reader, parentID string) (*drive.File, error) {
+func createFile(service *drive.Service, name string, content io.Reader) (*drive.File, error) {
 	f := &drive.File{
 		MimeType: "application/x-grivefile",
 		Name:     name,
@@ -172,7 +172,7 @@ func downloadFile(service *drive.Service, fileID string, path string) {
 }
 
 func getAllAccounts(configPath string) []*drive.Service {
-	fb, err := ioutil.ReadFile("accounts.txt")
+	fb, err := ioutil.ReadFile(accountConfig)
 	checkErr(err)
 	names := strings.Split(string(fb), "\r\n")
 
