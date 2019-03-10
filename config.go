@@ -6,5 +6,8 @@ const ACCDIR = "accounts/"
 // ACCCONFIG : Configuration file for all accounts
 const ACCCONFIG = ACCDIR + "accounts.txt"
 
-// STORAGEDIR : Uploaded file directory
-const STORAGEDIR = "storage/"
+// CLOUDDIR : Uploaded file directory
+const CLOUDDIR = "uploaded/"
+
+// LOCALDIR : Downloaded file directory
+const LOCALDIR = "downloaded/"

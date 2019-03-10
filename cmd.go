@@ -18,9 +18,18 @@ func handleCmd(cmdQue []string) {
 		handleUpload(cmdQue)
 	case "delete":
 		handleDelete(cmdQue)
+	case "get":
+		handleDownload(cmdQue)
 	default:
 		printHelpMsg()
 	}
+}
+
+func handleDownload(cmdQue []string) {
+	if len(cmdQue) != 1 {
+		fmt.Println("Usage: download {filename}")
+	}
+	downloadFile(cmdQue[0])
 }
 
 func handleDelete(cmdQue []string) {
