@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 func handleCmd(cmdQue []string) {
 	initial, cmdQue := cmdQue[0], cmdQue[1:]
@@ -13,13 +16,29 @@ func handleCmd(cmdQue []string) {
 		handleFile(cmdQue)
 	case "upload":
 		handleUpload(cmdQue)
+	case "delete":
+		handleDelete(cmdQue)
 	default:
 		printHelpMsg()
 	}
 }
 
-func handleUpload(cmdQue []string) {
+func handleDelete(cmdQue []string) {
+	if len(cmdQue) != 1 {
+		fmt.Println("Usage: delete {filename}")
+	}
+	deleteFileSt(cmdQue[0])
+}
 
+func handleUpload(cmdQue []string) {
+	if len(cmdQue) != 2 {
+		fmt.Println("Usage: upload {path to file} {chunk size in MB}")
+		return
+	}
+	size, err := strconv.ParseFloat(cmdQue[1], 2)
+	checkErr(err)
+
+	uploadBigFile(cmdQue[0], int64(size*1024*1024))
 }
 
 func handleAccounts(cmdQue []string) {
@@ -46,7 +65,11 @@ func handleSpace(cmdQue []string) {
 }
 
 func handleFile(cmdQue []string) {
-	fmt.Println("File stuff")
+	if len(cmdQue) == 0 {
+		fmt.Println("Files stored:")
+		getAllFileStInfo()
+	}
+
 }
 
 func printHelpMsg() {
