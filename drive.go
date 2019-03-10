@@ -16,7 +16,7 @@ import (
 	"google.golang.org/api/drive/v3"
 )
 
-func listAllFiles(service *drive.Service) []*drive.File {
+func listAllFilesCloud(service *drive.Service) []*drive.File {
 	allFiles := make([]*drive.File, 0)
 	r, err := service.Files.List().Fields("files(id, name, size)").Do()
 	checkErr(err)
@@ -117,7 +117,7 @@ func _saveToken(path string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func createFile(service *drive.Service, name string, content io.Reader) (*drive.File, error) {
+func createFileCloud(service *drive.Service, name string, content io.Reader) (*drive.File, error) {
 	f := &drive.File{
 		MimeType: "application/x-grivefile",
 		Name:     name,
@@ -132,7 +132,7 @@ func createFile(service *drive.Service, name string, content io.Reader) (*drive.
 	return file, nil
 }
 
-func createDir(service *drive.Service, name string, parentID string) (*drive.File, error) {
+func createDirCloud(service *drive.Service, name string, parentID string) (*drive.File, error) {
 	d := &drive.File{
 		Name:     name,
 		MimeType: "application/vnd.google-apps.folder",
@@ -149,12 +149,12 @@ func createDir(service *drive.Service, name string, parentID string) (*drive.Fil
 	return file, nil
 }
 
-func deleteFile(service *drive.Service, fileID string) error {
+func deleteFileCloud(service *drive.Service, fileID string) error {
 	err := service.Files.Delete(fileID).Do()
 	return err
 }
 
-func downloadFile(service *drive.Service, fileID string, path string) {
+func downloadFileCloud(service *drive.Service, fileID string) []byte {
 	resp, err := service.Files.Get(fileID).Download()
 	checkErr(err)
 	defer resp.Body.Close()
@@ -162,12 +162,7 @@ func downloadFile(service *drive.Service, fileID string, path string) {
 	content, err := ioutil.ReadAll(resp.Body)
 	checkErr(err)
 
-	f, err := os.Create(path)
-	checkErr(err)
-	defer f.Close()
-
-	f.Write(content)
-	checkErr(err)
+	return content
 }
 
 func getAllAccounts(configPath string) []*drive.Service {
