@@ -18,7 +18,7 @@ import (
 
 func listAllFiles(service *drive.Service) []*drive.File {
 	allFiles := make([]*drive.File, 0)
-	r, err := service.Files.List().Fields("nextPageToken, files(id, name, size)").Do()
+	r, err := service.Files.List().Fields("files(id, name, size)").Do()
 	checkErr(err)
 
 	if len(r.Files) > 0 {
@@ -50,7 +50,7 @@ func getFileContentType(out *os.File) (string, error) {
 }
 
 func retrieveAccount(name string) *drive.Service {
-	b, err := ioutil.ReadFile(name + "_credentials.json")
+	b, err := ioutil.ReadFile(ACCDIR + name + "_credentials.json")
 	checkErr(err)
 
 	// If modifying these scopes, delete your previously saved token.json.
@@ -70,7 +70,7 @@ func _getClient(config *oauth2.Config, name string) *http.Client {
 	// The file {username}_token.json stores the user's access and refresh tokens, and is
 	// created automatically when the authorization flow completes for the first
 	// time.
-	tokFile := name + "_token.json"
+	tokFile := ACCDIR + name + "_token.json"
 	tok, err := _tokenFromFile(tokFile)
 	if err != nil {
 		tok = _getTokenFromWeb(config)
@@ -121,7 +121,6 @@ func createFile(service *drive.Service, name string, content io.Reader) (*drive.
 	f := &drive.File{
 		MimeType: "application/x-grivefile",
 		Name:     name,
-		// Parents:  []string{parentID},
 	}
 	file, err := service.Files.Create(f).Media(content).Do()
 
@@ -172,7 +171,7 @@ func downloadFile(service *drive.Service, fileID string, path string) {
 }
 
 func getAllAccounts(configPath string) []*drive.Service {
-	fb, err := ioutil.ReadFile(accountConfig)
+	fb, err := ioutil.ReadFile(ACCCONFIG)
 	checkErr(err)
 	names := strings.Split(string(fb), "\r\n")
 
