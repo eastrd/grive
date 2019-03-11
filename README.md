@@ -31,3 +31,7 @@
 4. Add the name of your JSON file without the suffix into `accounts/accounts.txt` in a newline. (In my case, just {AccountName})
 5. Execute `$ grive accounts` and Grive will ask you to click the link and paste the token in the terminal, do so.
 6. You are good to go :D 
+
+
+### Build Grive
+- Easy, just run `$ go build -o grive *.go`
