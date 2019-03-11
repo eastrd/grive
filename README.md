@@ -23,3 +23,10 @@
 - `$ grive file delete [filename]`: Remove a file from Google Drives.
 - `$ grive accounts`: Shows the accounts details that is connected to Grive.
 - `$ grive space`: Show Google Drives space usage.
+
+### To Start:
+1. Create two folders: `uploaded` and `downloaded` in this repo after `git clone`. `uploaded` directory will be used to store uploaded files' configurations, and `downloaded` directory contains all files that are downloaded by Grive.
+2. Goto https://developers.google.com/drive/api/v3/quickstart/go and click `ENABLE THE DRIVE API`, then `DOWNLOAD CLIENT CONFIGURATION` and rename the `credential.json` into any JSON file you like. (In my case, I just renamed it to be my {AccountName}.json)
+3. Place the JSON file into `accounts/` folder.
+4. Execute `$ grive accounts` and Grive will ask you to click the link and paste the token in the terminal, do so.
+5. You are good to go :D 
