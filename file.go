@@ -140,9 +140,9 @@ func getAllFileStInfo() {
 		fileSt := _getFileSt(fName)
 
 		fmt.Println("-> "+fName+":\n", " Chunk Size:", fileSt.ChunkSize, "  Total Size:", fileSt.TotalSize)
-		for _, c := range fileSt.Chunks {
-			fmt.Println("["+c.Email+"]: ", " Checksum:", c.Checksum, " FileID:", c.FileID)
-		}
+		// for _, c := range fileSt.Chunks {
+		// 	fmt.Println("["+c.Email+"]: ", " Checksum:", c.Checksum, " FileID:", c.FileID)
+		// }
 	}
 }
 
