@@ -36,3 +36,10 @@
 
 ### Build Grive
 - Easy, just run `$ go build -o grive *.go`
+
+
+
+### TODO
+- Fix the tailing null bytes bug
+- Finding a way to utilize goroutines to increase network I/O efficiencies
+- Craft a frontend & backend for Grive (use websocket)
