@@ -25,12 +25,13 @@
 - `$ grive space`: Show Google Drives space usage.
 
 ### Setup Tutorial:
-1. Create two folders: `uploaded` and `downloaded` in this repo after `git clone`. `uploaded` directory will be used to store uploaded files' configurations, and `downloaded` directory contains all files that are downloaded by Grive.
-2. Goto https://developers.google.com/drive/api/v3/quickstart/go and click `ENABLE THE DRIVE API`, then `DOWNLOAD CLIENT CONFIGURATION` and rename the `credential.json` into any JSON file you like. (In my case, I just renamed it to be my {AccountName}.json)
-3. Place the JSON file into `accounts/` folder.
-4. Add the name of your JSON file without the suffix into `accounts/accounts.txt` in a newline. (In my case, just {AccountName})
-5. Execute `$ grive accounts` and Grive will ask you to click the link and paste the token in the terminal, do so.
-6. You are good to go :D 
+1. Install `Golang` environment, and install dependencies for Google Drives: `go get golang.org/x/oauth2` and `go get google.golang.org/api/drive/v3`.
+2. Create two folders: `uploaded` and `downloaded` in this repo after `git clone`. `uploaded` directory will be used to store uploaded files' configurations, and `downloaded` directory contains all files that are downloaded by Grive.
+3. Goto https://developers.google.com/drive/api/v3/quickstart/go and click `ENABLE THE DRIVE API`, then `DOWNLOAD CLIENT CONFIGURATION` and rename the `credential.json` into any JSON file you like. (In my case, I just renamed it to be my {AccountName}.json)
+4. Place the JSON file into `accounts/` folder.
+5. Add the name of your JSON file without the suffix into `accounts/accounts.txt` in a newline. (In my case, just {AccountName})
+6. Execute `$ grive accounts` and Grive will ask you to click the link and paste the token in the terminal, do so.
+7. You are good to go :D 
 
 
 ### Build Grive
