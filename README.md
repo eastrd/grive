@@ -18,7 +18,8 @@
 
 ### Usage:
 - `$ grive file`: Show a list of files in Google Drives that's being uploaded by Grive.
+- `$ grive file upload [filename] [chunk size in MB]`: Upload a file onto Google Drives.
+- `$ grive file get [filename]`: Download a file from Google Drives.
+- `$ grive file delete [filename]`: Remove a file from Google Drives.
 - `$ grive accounts`: Shows the accounts details that is connected to Grive.
-- `$ grive upload [filename] [chunk size in MB]`: Upload a file onto Google Drives.
-- `$ grive get [filename]`: Download a file from Google Drives.
-- `$ grive delete [filename]`: Remove a file from Google Drives.
+- `$ grive space`: Show Google Drives space usage.
