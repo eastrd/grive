@@ -168,10 +168,15 @@ func downloadFileCloud(service *drive.Service, fileID string) []byte {
 func getAllAccounts(configPath string) []*drive.Service {
 	fb, err := ioutil.ReadFile(ACCCONFIG)
 	checkErr(err)
-	names := strings.Split(string(fb), "\r\n")
+	names := strings.Split(string(fb), "\n")
 
 	srvs := make([]*drive.Service, 0)
+
+	// Remove \r from the characters (Windows)
 	for _, name := range names {
+		name = strings.Replace(name, "\r", "", -1)
+		fmt.Println(len(name), name)
+		// In case there's a newline character
 		srvs = append(srvs, retrieveAccount(name))
 	}
 	return srvs
