@@ -50,7 +50,7 @@ func getFileContentType(out *os.File) (string, error) {
 }
 
 func retrieveAccount(name string) *drive.Service {
-	b, err := ioutil.ReadFile(ACCDIR + name + "_credentials.json")
+	b, err := ioutil.ReadFile(ACCDIR + name + ".json")
 	checkErr(err)
 
 	// If modifying these scopes, delete your previously saved token.json.
