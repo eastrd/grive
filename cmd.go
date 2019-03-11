@@ -14,12 +14,6 @@ func handleCmd(cmdQue []string) {
 		handleSpace(cmdQue)
 	case "file":
 		handleFile(cmdQue)
-	case "upload":
-		handleUpload(cmdQue)
-	case "delete":
-		handleDelete(cmdQue)
-	case "get":
-		handleDownload(cmdQue)
 	default:
 		printHelpMsg()
 	}
@@ -77,10 +71,25 @@ func handleFile(cmdQue []string) {
 	if len(cmdQue) == 0 {
 		fmt.Println("Files stored:")
 		getAllFileStInfo()
+		return
 	}
-
+	fileCmd, cmdQue := cmdQue[0], cmdQue[1:]
+	switch fileCmd {
+	case "upload":
+		handleUpload(cmdQue)
+	case "get":
+		handleDownload(cmdQue)
+	case "delete":
+		handleDelete(cmdQue)
+	default:
+		printHelpMsg()
+	}
 }
 
 func printHelpMsg() {
-	fmt.Println("Invalid option")
+	fmt.Println("Grive Usage:")
+	fmt.Println("$ grive file [upload/get/delete]")
+	fmt.Println("$ grive accounts")
+	fmt.Println("$ grive space")
+
 }
