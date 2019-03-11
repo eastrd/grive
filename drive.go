@@ -174,10 +174,11 @@ func getAllAccounts(configPath string) []*drive.Service {
 
 	// Remove \r from the characters (Windows)
 	for _, name := range names {
-		name = strings.Replace(name, "\r", "", -1)
-		fmt.Println(len(name), name)
-		// In case there's a newline character
-		srvs = append(srvs, retrieveAccount(name))
+		if len(name) > 0 {
+			name = strings.Replace(name, "\r", "", -1)
+			// In case there's a newline character
+			srvs = append(srvs, retrieveAccount(name))
+		}
 	}
 	return srvs
 }
