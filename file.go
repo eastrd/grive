@@ -114,7 +114,6 @@ func uploadBigFile(path string, size int64) {
 		if pos == len(srvs) {
 			pos = 0
 		}
-
 		// Upload
 		f, err := createFileCloud(srv, checksum, bytes.NewReader(content))
 		checkErr(err)
@@ -178,10 +177,16 @@ func deleteFileSt(fName string) {
 
 	for _, chunk := range fileSt.Chunks {
 		fmt.Println("Deleting", chunk.FileID, "from", chunk.Email)
-		go deleteFileCloud(srvMapper[chunk.Email], chunk.FileID, &wg)
+		go func() {
+			defer wg.Done()
+			err := deleteFileCloud(srvMapper[chunk.Email], chunk.FileID)
+			checkErr(err)
+		}()
+
 		// 0.2 sec safe delay to avoid quota lockouts
 		time.Sleep(200 * time.Millisecond)
 	}
+
 	wg.Wait()
 
 	// Remove the config file at last
