@@ -11,6 +11,8 @@ import (
 	"math"
 	"os"
 	"strings"
+	"sync"
+	"time"
 
 	"google.golang.org/api/drive/v3"
 )
@@ -168,13 +170,19 @@ func deleteFileSt(fName string) {
 	// Remove all chunks that a File struct points to
 	fileSt := _getFileSt(fName)
 
+	// Use a waitgroup to utilize goroutines to delete all chunks simulatenously
+	var wg sync.WaitGroup
+	wg.Add(len(fileSt.Chunks))
+
 	srvMapper := makeEmailSrvMapper()
 
 	for _, chunk := range fileSt.Chunks {
 		fmt.Println("Deleting", chunk.FileID, "from", chunk.Email)
-		err := deleteFileCloud(srvMapper[chunk.Email], chunk.FileID)
-		checkErr(err)
+		go deleteFileCloud(srvMapper[chunk.Email], chunk.FileID, &wg)
+		// 0.2 sec safe delay to avoid quota lockouts
+		time.Sleep(200 * time.Millisecond)
 	}
+	wg.Wait()
 
 	// Remove the config file at last
 	err := os.Remove(CLOUDDIR + fName)

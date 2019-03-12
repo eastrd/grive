@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"sync"
 
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
@@ -149,9 +150,10 @@ func createDirCloud(service *drive.Service, name string, parentID string) (*driv
 	return file, nil
 }
 
-func deleteFileCloud(service *drive.Service, fileID string) error {
+func deleteFileCloud(service *drive.Service, fileID string, wg *sync.WaitGroup) {
+	defer wg.Done()
 	err := service.Files.Delete(fileID).Do()
-	return err
+	checkErr(err)
 }
 
 func downloadFileCloud(service *drive.Service, fileID string) []byte {
