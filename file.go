@@ -81,8 +81,8 @@ func uploadBigFile(path string, size int64) {
 		content := make([]byte, size)
 		_, err := f.Read(content)
 		content = bytes.TrimRight(content, "\x00")
-		fmt.Print("Content is: ")
-		fmt.Println(content)
+		// fmt.Print("Content is: ")
+		// fmt.Println(content)
 		if err == io.EOF {
 			break
 		}
@@ -117,10 +117,12 @@ func uploadBigFile(path string, size int64) {
 	fOut, err := json.MarshalIndent(fileSt, "", " ")
 	checkErr(err)
 
-	// Extract filename from path
-	s := strings.Split(path, "/")
-	fName := s[len(s)-1]
-	// Store to storage/
+	// Extract filename from path, need to check for both slashes for win and nix OS
+	winS := strings.Split(path, "/")
+	nixS := strings.Split(winS[len(winS)-1], "\\")
+	fName := nixS[len(nixS)-1]
+
+	// Store to storage
 	_ = ioutil.WriteFile(CLOUDDIR+fName, fOut, 0644)
 }
 
