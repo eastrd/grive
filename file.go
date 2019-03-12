@@ -23,15 +23,16 @@ import (
 				size,
 				email,
 			},
-			Size:
+			TotalSize: Total size of the file
+			AverageChunkSize: Average chunk size, not including the tailing chunk (equal or smaller than average)
 		}
 */
 
 // File .
 type File struct {
-	TotalSize int64
-	ChunkSize int64
-	Chunks    []Chunk
+	TotalSize    int64
+	AvgChunkSize int64
+	Chunks       []Chunk
 }
 
 // Chunk .
@@ -66,9 +67,9 @@ func uploadBigFile(path string, size int64) {
 
 	chunks := make([]Chunk, 0)
 	fileSt := File{
-		TotalSize: getSize(path),
-		ChunkSize: size,
-		Chunks:    chunks,
+		TotalSize:    getSize(path),
+		AvgChunkSize: size,
+		Chunks:       chunks,
 	}
 
 	// Fetch all Google Accounts & Construct a round queue
@@ -79,6 +80,9 @@ func uploadBigFile(path string, size int64) {
 		// Fetch the next chunk and upload
 		content := make([]byte, size)
 		_, err := f.Read(content)
+		content = bytes.TrimRight(content, "\x00")
+		fmt.Print("Content is: ")
+		fmt.Println(content)
 		if err == io.EOF {
 			break
 		}
@@ -139,10 +143,7 @@ func getAllFileStInfo() {
 		fName := f.Name()
 		fileSt := _getFileSt(fName)
 
-		fmt.Println("-> "+fName+":\n", " Chunk Size:", fileSt.ChunkSize, "  Total Size:", fileSt.TotalSize)
-		// for _, c := range fileSt.Chunks {
-		// 	fmt.Println("["+c.Email+"]: ", " Checksum:", c.Checksum, " FileID:", c.FileID)
-		// }
+		fmt.Println("-> "+fName+":\n", " Chunk Size:", fileSt.AvgChunkSize, "  Total Size:", fileSt.TotalSize)
 	}
 }
 
