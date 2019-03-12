@@ -40,6 +40,5 @@
 
 
 ### TODO
-- Fix the tailing null bytes bug
-- Finding a way to utilize goroutines to increase network I/O efficiencies
+- Utilize goroutines to increase network I/O efficiencies
 - Craft a frontend & backend for Grive (use websocket)
