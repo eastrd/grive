@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"math"
 	"os"
 	"strings"
 
@@ -65,9 +66,11 @@ func uploadBigFile(path string, size int64) {
 	f, err := os.Open(path)
 	checkErr(err)
 
+	totalSize := getSize(path)
+
 	chunks := make([]Chunk, 0)
 	fileSt := File{
-		TotalSize:    getSize(path),
+		TotalSize:    totalSize,
 		AvgChunkSize: size,
 		Chunks:       chunks,
 	}
@@ -76,13 +79,22 @@ func uploadBigFile(path string, size int64) {
 	srvs := getAllAccounts(ACCCONFIG)
 	pos := 0
 
+	// Calculate the tailing chunk size to avoid uploading extra null bytes
+	lastChunkSize := totalSize % size
+	numChunks := int(math.Ceil(float64(totalSize) / float64(size)))
+	currentNumChunk := 1
+
+	fmt.Println("Total size:", totalSize, " Chunk Size:", size, " Predicted Num Chunks:", numChunks)
+
 	for {
 		// Fetch the next chunk and upload
 		content := make([]byte, size)
 		_, err := f.Read(content)
-		content = bytes.TrimRight(content, "\x00")
-		// fmt.Print("Content is: ")
-		// fmt.Println(content)
+		// If it's the very last chunk, only record the actual leftover bytes for the chunk
+		if currentNumChunk == numChunks {
+			content = content[:lastChunkSize]
+		}
+
 		if err == io.EOF {
 			break
 		}
@@ -113,6 +125,8 @@ func uploadBigFile(path string, size int64) {
 			FileID:   f.Id,
 			Email:    getUserInfo(srv).EmailAddress,
 		})
+
+		currentNumChunk++
 	}
 	fOut, err := json.MarshalIndent(fileSt, "", " ")
 	checkErr(err)
